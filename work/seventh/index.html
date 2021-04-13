@@ -26,6 +26,45 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        var index = 0
+        var moveLength = 0
+        var imgList = $('.slider-list img');
+        $('.slider-ctrl-btn').click(function(){
+          if($(this).data('ctrl') === 'prev'){
+            if(index === 0){
+              ToFinalImg()
+              animation();
+              index = imgList.length - 1
+            } else {
+              moveLength = moveLength + imgList[index].width;
+              index = index - 1;
+              animation();
+            }
+          } else if($(this).data('ctrl') === 'next'){
+            if(index === imgList.length - 1){
+              moveLength = 0
+              animation();
+              index = 0;
+            } else {
+              moveLength = moveLength - imgList[index].width;
+              index = index + 1;
+              animation();
+            }
+          };
+        });
+        function animation(){
+          $('.slider-list').animate({
+            left: moveLength
+          }, 500);
+        };
+        function ToFinalImg(){
+          imgList.each(function(num, img){
+            moveLength = moveLength - img.width;
+          });
+          moveLength = moveLength + imgList[imgList.length - 1].width;
+          };
+        });
       // 今回やるのはスライドショーです。
       // 右方向には右のボタンを押すと移動し、左方向には左のボタンを押すと移動する。また右端にいる状態で右のボタンを押すと最初の位置に戻り、 左端にいる状態で左のボタンを押すと最後の位置に移動する。data属性にprev,nextを記述してあるのでこちらを取得すると楽です。
       // 位置情報は配列に格納しておき、右のボタンをクリックするたびに配列の添字を1追加し、左のボタンをクリックすると配列の添字を1減らします。そうすることによって次の座標が取得できます。その座標にアニメーションさせるととても楽です。
