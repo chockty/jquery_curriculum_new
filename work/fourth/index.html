@@ -47,11 +47,11 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
-      $(function(){
-        $('.menu__list__title').hover(function() {
-          $(this).next().stop().slideDown(500);
+      $(function() {
+        $('.menu__list li').hover(function() {
+          $(this).children('ul').stop().slideDown(500);
         }, function() {
-          $(this).next().stop().slideUp(500);
+          $(this).children('ul').stop().slideUp(500);
         });
       });
       // 今回やるのはドロップメニューです。
