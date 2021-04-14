@@ -28,6 +28,128 @@
     <script src="../../common/js/jquery.js"></script>
     <script src="./js/appid.js"></script>
     <script>
+      $(function(){
+        var keyword = '';
+        var page = 0;
+        $('.search__btn').on('click', function(){
+          keyword = $('.search__text__input').val();
+          $('.pager').remove();
+          ajax(keyword, 1);
+          page = 1;
+        });
+
+        function ajax(keyword,page){
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',
+            datatype: 'json',
+            data: {
+              applicationId: appId,
+              booksGenreId: '001',
+              keyword: keyword,
+              hits: 20,
+              page: page,
+              orFlag: 0,
+              field: 1
+            },
+          }).done(function(data) {
+            if(data.count > 0){
+              showPager(data);
+              showContents(data);
+            } else if(data.count == 0) {
+              showErrorMsg("no-hits");
+            }
+          }).fail(function(data){
+            if(data.responseJSON.error_description === "keyword must be set"){
+              showErrorMsg("no-keyword");
+            }
+            var error_data = {
+              status: data.status,
+              status_text: data.statusText,
+              error_text: data.responseJSON.error,
+              error_description: data.responseJSON.error_description
+            };
+            console.log(error_data);
+          });
+        }
+
+        function showContents(data){
+          $('.lists').empty();
+          $.each(data.Items, function(index, item){
+            var html =
+            `<li class="lists__item">
+              <div class="lists__item__inner">
+                <a href="${item.Item.itemUrl}" class="lists__item__link" target="_blank">
+                  <img src="${item.Item.largeImageUrl}" class="lists__item__img" alt="${item.Item.title}">
+                  <p class="lists__item__detail">作品名：${item.Item.title}</p>
+                  <p class="lists__item__detail">作者　：${item.Item.author}</p>
+                  <p class="lists__item__detail">出版社：${item.Item.publisherName}</p>
+                </a>
+              </div>
+            </li>`;
+            $('.lists').append(html);
+          });
+        }
+
+        function showPager(data){
+          var pager = `
+            <div class="pager" data-js="pager">
+              <div class="counter">
+                <span class="counter-current">${data.page}</span>/<span class="counter-all">${data.pageCount}</span>
+              </div>
+              <div class="btn-wrapper">
+                <a class="btn-item" data-js="page-prev" href="">前へ</a>
+                <a class="btn-item" data-js="page-next" href="">次へ</a>
+              </div>
+            </div>`
+          $('.lists').after(pager);
+          if(data.pageCount === 1){
+            $('.btn-item').addClass('disabled');
+          } else {
+            $('.btn-item').each(function(){
+              if((data.page === 1) && ($(this).data('js') === 'page-prev')){
+                $(this).addClass('disabled');
+              } else if (data.page === data.pageCount && $(this).data('js') === 'page-next'){
+                $(this).addClass('disabled');
+              }
+            })
+          }
+          $('.btn-item').on('click', function(e){
+            e.preventDefault();
+            if($(this).data('js') === 'page-prev'){
+              if(page === 1){
+                return null;
+              } else {
+                page = page - 1;
+                movePage();
+              }
+            } else if($(this).data('js') === 'page-next'){
+              if(page === $('.counter-all').html()){
+                return null
+              } else {
+                page = page + 1;
+                movePage();
+              }
+            }
+          });
+        }
+
+        function movePage(){
+          $('.pager').remove();
+          ajax(keyword, page);
+          $('html, body').scrollTop(0);
+        };
+
+        function showErrorMsg(condition){
+          if(condition === 'no-hits'){
+            var errorMsg = '<p>検索結果が見つかりませんでした。別のキーワードで検索して下さい。</p>'
+          }else if(condition === 'no-keyword'){
+            var errorMsg = '<p>検索文字が入力されていません。</p>'
+          }
+          $('.message').append(errorMsg);
+        };
+      })
+
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //
