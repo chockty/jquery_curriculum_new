@@ -21,14 +21,16 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
-      var modal = $('.modal')
-      // 読み込まれる度に定義されるので定義しない方がいい？
-      $('.modal-show').click(function() {
-        modal.fadeIn(1000);
-      });
-      $('.modal-close').click(function() {
-        modal.fadeOut(1000);
-      });
+      $(function(){
+        var modal = $('.modal')
+        // 読み込まれる度に定義されるので定義しない方がいい？
+        $('.modal-show').click(function() {
+          modal.fadeIn(1000);
+        });
+        $('.modal-close').click(function() {
+          modal.fadeOut(1000);
+        });
+      })
       
       // 今回やるのはモーダルです。
       // .modal-show をクリックすることで .modal をfadeInさせる。
