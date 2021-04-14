@@ -89,8 +89,7 @@
     // 第4問  id='q4'の要素をクリックしたらこの要素の前後とこの要素内の前後にテキストを挿入せよ。
     $('#q4').click(insert);
     function insert() {
-      var text = "test_text"
-      $(this).prepend(text).append(text).before(text).after(text)
+      $(this).prepend('DOMの中の前').append('DOMの中の後').before('DOMの前').after('DOMの後');
     };
     // ここにチェーンを繋げるのに順番はある？
 
