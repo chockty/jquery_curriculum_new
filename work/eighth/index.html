@@ -43,7 +43,15 @@
         });
         $('.menu__btn').click(function(){
           var title = $(this).data('scroll-place-type');
-        })
+          $('.title').each(function(){
+            if($(this).data('scroll-place-type') === title){
+              var position = $(this).offset().top
+              $('body, html').animate({
+                scrollTop: position
+              }, 600)
+            }
+          });
+        });
       })
       // 今回やるのはページ内スクロールです。
       // 左上にあるメニューを押して、そのタイトルと同じ位置までスクロールするアニメーションです。
