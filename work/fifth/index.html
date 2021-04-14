@@ -84,17 +84,17 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
-      $(function(){
-        $('.select').change(function(){
-          var key = $(this).val();
-          if(key === 'all'){
+      $(function() {
+        $('.select').change(function() {
+          var keyword = $(this).val();
+          if (keyword === 'all') {
             $('.list li').show();
-          }else{
-            $('.list li').each(function(){
-              if($(this).data('category-type') === key){
-                $(this).show();
-              }else{
-                $(this).hide();
+          } else {
+            $('.list li').each(function(index, category) {
+              if ($(category).data('category-type') === keyword) {
+                $(category).show();
+              } else {
+                $(category).hide();
               }
             });
           }
