@@ -104,7 +104,7 @@
               </div>
             </div>`
           $('.lists').after(pager);
-          } else {
+          } else if ($('.pager').length !== 0) {
             $('.counter-current').html(currentPage)
           }
           $('.btn-item').removeClass('disabled').each(function(index, btnItem) {
@@ -121,13 +121,13 @@
 
         //ページ遷移処理
         function movePage(btnItem) {
-          var $btnItem = btnItem.data('js')
-          if(currentPage === 1 && $btnItem === 'page-prev'){
+          var btnItem = btnItem.data('js')
+          if(currentPage === 1 && btnItem === 'page-prev'){
             return null;
-          } else if (currentPage === finalPage && $btnItem === 'page-next'){
+          } else if (currentPage === finalPage && btnItem === 'page-next'){
             return null;
           } else {
-            if ($btnItem === 'page-prev') {
+            if (btnItem === 'page-prev') {
               currentPage -- ;
             } else if ($btnItem === 'page-next') {
               currentPage ++;
