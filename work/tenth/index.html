@@ -31,7 +31,6 @@
       $(function(){
         var keyword = '';
         var currentPage = 1;
-        var finalPage = 0;
 
         // 検索ボタンが押された時の処理
         $('[data-js="search-btn"]').click(function() {
@@ -71,9 +70,8 @@
             if (data.count === 0) {
               $('.message').html('<p>検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
             } else if (data.count > 0) {
-              finalPage = data.pageCount
               showContents(data);
-              showPager()
+              showPager(data);
             }
           }).fail(function(error) {
             showErrorMsg(error.status);
@@ -100,12 +98,12 @@
         }
 
         //ページャーの表示処理
-        function showPager() {
+        function showPager(data) {
           if ($('[data-js="pager"]').length === 0) {
             var pager = (
               '<div class="pager" data-js="pager">' +
                 '<div class="counter">' +
-                  '<span class="counter-current">'+ currentPage +'</span>/<span class="counter-all">'+ finalPage +'</span>' +
+                  '<span class="counter-current">'+ data.page +'</span>/<span class="counter-all">'+ data.pageCount +'</span>' +
                 '</div>' +
                 '<div class="btn-wrapper">' +
                   '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
@@ -114,12 +112,12 @@
               '</div>');
             $('.lists').after(pager);
           } else if ($('[data-js="pager"]').length !== 0) {
-            $('.counter-current').html(currentPage)
+            $('.counter-current').html(data.page)
           }
           $('.btn-item').removeClass('disabled').each(function(index, btnItem) {
-            if (currentPage === 1 && $(btnItem).data('js') === 'page-prev') {
+            if (data.page === 1 && $(btnItem).data('js') === 'page-prev') {
               $(btnItem).addClass('disabled');
-            } else if (currentPage === finalPage && $(btnItem).data('js') === 'page-next') {
+            } else if (data.page === data.pageCount && $(btnItem).data('js') === 'page-next') {
               $(btnItem).addClass('disabled');
             }
           })
