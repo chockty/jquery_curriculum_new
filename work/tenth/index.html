@@ -48,7 +48,10 @@
         // ページャーのボタンが押された時の処理
         $(document).on('click', '.btn-item', function(e) {
           e.preventDefault();
-          movePage($(this))
+          if($(this).hasClass('disabled')) {
+            return false;
+          }
+          movePage($(this).data('js'));
         });
 
         // ajax通信によるデータ取得
@@ -65,15 +68,15 @@
               page: currentPage,
             }
           }).done(function(data) {
-            if (data.count > 0) {
+            if (data.count === 0) {
+              $('.message').html('<p>検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
+            } else if (data.count > 0) {
               finalPage = data.pageCount
               showContents(data);
               showPager()
-            } else if (data.count === 0) {
-              $('.message').html('<p>検索結果が見つかりませんでした。別のキーワードで検索して下さい。</p>');
             }
-          }).fail(function(data) {
-            showErrorMsg(data.status);
+          }).fail(function(error) {
+            showErrorMsg(error.status);
           });
         }
 
@@ -123,38 +126,32 @@
         }
 
         //ページ遷移処理
-        function movePage(btnItem) {
-          var btnItem = btnItem.data('js')
-          if(currentPage === 1 && btnItem === 'page-prev') {
-            return null;
-          } else if (currentPage === finalPage && btnItem === 'page-next') {
-            return null;
-          } else {
-            if (btnItem === 'page-prev') {
-              currentPage -- ;
-            } else if (btnItem === 'page-next') {
-              currentPage ++;
-            }
-            collectData();
-            $('html, body').scrollTop(0);
+        function movePage(btnData) {
+          if (btnData === 'page-prev') {
+            currentPage -- ;
+          } else if (btnData === 'page-next') {
+            currentPage ++;
           }
+          collectData();
+          $('html, body').scrollTop(0);
         };
 
         //エラーメッセージ表示処理
         function showErrorMsg(statusCode) {
-          var tag = 'p'
+          var tag = 'p';
+          var errorMsg = '';
           switch(statusCode) {
             case 0:
-              var errorMsg = '<'+ tag +'>通信に失敗しました。インターネットの接続をご確認ください。</'+ tag +'>';
+              errorMsg = '<'+ tag +'>通信に失敗しました。インターネットの接続をご確認ください。</'+ tag +'>';
               break;
             case 400:
-              var errorMsg = '<'+ tag +'>検索文字が入力されていません。</'+ tag +'>';
+              errorMsg = '<'+ tag +'>検索文字が入力されていません。</'+ tag +'>';
               break;
             case 429:
-              var errorMsg = '<'+ tag +'>リクエスト過多です。しばらく時間を置いてからお試しください。</'+ tag +'>';
+              errorMsg = '<'+ tag +'>リクエスト過多です。しばらく時間を置いてからお試しください。</'+ tag +'>';
               break;
             default:
-              var errorMsg = '<'+ tag +'>エラーが発生しました。しばらく時間を置いてからお試しください。</'+ tag +'>';
+              errorMsg = '<'+ tag +'>エラーが発生しました。しばらく時間を置いてからお試しください。</'+ tag +'>';
               break;
           }
           $('.message').html(errorMsg);
